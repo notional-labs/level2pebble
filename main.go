@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) != 3 {
-		panic("Usage: level2pebble <source> <target>")
+		panic("Usage: level2pebble <sourcePath> <targetDir>")
 	}
 
 	fmt.Printf("source=%s, target=%s\n", os.Args[1], os.Args[2])

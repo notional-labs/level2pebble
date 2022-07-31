@@ -9,8 +9,16 @@ make build
 
 ### Usage
 ```bash
-level2pebble <source> <target>
+level2pebble <sourcePath> <targetDir>
 ```
 
-- `<source>`: dir to goleveldb database
-- `<target>`: dir to pebbledb database
+- `<sourcePath>`: path to goleveldb database
+- `<targetDir>`: dir to pebbledb database
+
+Example:
+
+```
+level2pebble /Volumes/RAMDisk/test/data/state.db /Volumes/RAMDisk/pebbledb
+```
+
+will convert `/Volumes/RAMDisk/test/data/state.db` goleveldb to new pebbledb with path `/Volumes/RAMDisk/pebbledb/state.db`
