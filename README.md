@@ -7,6 +7,11 @@ Convert GoLevelDB database into PebbleDB database
 make build
 ```
 
+### Install
+```bash
+make install
+```
+
 ### Usage
 ```bash
 level2pebble <sourcePath> <targetDir>
