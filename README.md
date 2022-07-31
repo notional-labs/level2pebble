@@ -12,5 +12,5 @@ make build
 level2pebble <source> <target>
 ```
 
-- <source>: dir to goleveldb database
-- <target>: dir to pebbledb database
+- `<source>`: dir to goleveldb database
+- `<target>`: dir to pebbledb database
