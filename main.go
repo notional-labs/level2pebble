@@ -56,7 +56,7 @@ func main() {
 		offset++
 
 		if offset%10000 == 0 {
-			fmt.Println(offset)
+			fmt.Printf("processing %s: %d\n", dbName, offset)
 			runtime.GC() // Force GC
 		}
 	}
