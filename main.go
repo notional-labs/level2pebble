@@ -13,19 +13,19 @@ func main() {
 		panic("Usage: level2pebble <sourcePath> <targetDir>")
 	}
 
-	fmt.Printf("source=%s, target=%s\n", os.Args[1], os.Args[2])
+	fmt.Printf("pebble2level: source=%s, target=%s\n", os.Args[1], os.Args[2])
 
 	dbName := filepath.Base(os.Args[1])
 	dbName = dbName[:len(dbName)-len(filepath.Ext(dbName))] // get rid of .db
 	dbDirSource := filepath.Dir(os.Args[1])
 	dbDirTarget := os.Args[2]
 
-	dbLev, errLev := tmdb.NewGoLevelDB(dbName, dbDirSource)
+	dbLev, errLev := tmdb.NewPebbleDB(dbName, dbDirSource)
 	if errLev != nil {
 		panic(errLev)
 	}
 
-	dbPeb, errPeb := tmdb.NewPebbleDB(dbName, dbDirTarget)
+	dbPeb, errPeb := tmdb.NewGoLevelDB(dbName, dbDirTarget)
 
 	if errPeb != nil {
 		panic(errPeb)
