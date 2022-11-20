@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/cockroachdb/pebble"
 	tmdb "github.com/tendermint/tm-db"
 	"os"
 	"path/filepath"
@@ -44,22 +45,38 @@ func main() {
 
 	offset := 0
 
+	rawDBPebble := dbPeb.(*tmdb.PebbleDB).DB()
+	bat := rawDBPebble.NewBatch()
+
 	for ; itr.Valid(); itr.Next() {
 		key := itr.Key()
 		value := itr.Value()
 
-		errSet := dbPeb.Set(key, value)
+		offset++
+
+		errSet := bat.Set(key, value, pebble.Sync)
 		if errSet != nil {
 			panic(errSet)
 		}
 
-		offset++
-
-		if offset%1000000 == 0 {
+		if offset%30000 == 0 {
 			fmt.Printf("processing %s: %d\n", dbName, offset)
+
+			bat.Commit(pebble.Sync)
+			bat.Reset()
+
 			runtime.GC() // Force GC
 		}
+
+		// for testing only
+		//if offset > 15000 {
+		//	break
+		//}
 	}
+
+	// write the last batch
+	bat.Commit(pebble.Sync)
+	bat.Close()
 
 	itr.Close()
 }
