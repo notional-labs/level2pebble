@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/cockroachdb/pebble"
+	levelopt "github.com/syndtr/goleveldb/leveldb/opt"
 	tmdb "github.com/tendermint/tm-db"
+	"math"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -21,7 +23,14 @@ func main() {
 	dbDirSource := filepath.Dir(os.Args[1])
 	dbDirTarget := os.Args[2]
 
-	dbLev, errLev := tmdb.NewGoLevelDB(dbName, dbDirSource)
+	// options to disable compaction for goleveldb
+	levelOptions := levelopt.Options{
+		CompactionL0Trigger:    math.MaxInt32,
+		DisableSeeksCompaction: true,
+		WriteL0PauseTrigger:    math.MaxInt32,
+		WriteL0SlowdownTrigger: math.MaxInt32,
+	}
+	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
 		panic(errLev)
 	}
