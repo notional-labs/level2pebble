@@ -59,7 +59,7 @@ func main() {
 			panic(errSet)
 		}
 
-		if offset%30000 == 0 {
+		if bat.Len() >= 1073741824 { // 1 GB
 			fmt.Printf("processing %s: %d\n", dbName, offset)
 
 			bat.Commit(pebble.Sync)
