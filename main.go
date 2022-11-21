@@ -36,16 +36,16 @@ func main() {
 	}
 
 	// options to disable compaction for pebbledb
-	opts := &pebble.Options{
+	pebbleOptions := &pebble.Options{
 		L0CompactionFileThreshold:   math.MaxInt32,
 		L0CompactionThreshold:       math.MaxInt32,
 		L0StopWritesThreshold:       math.MaxInt32,
 		MaxConcurrentCompactions:    1,
 		DisableAutomaticCompactions: true,
 	}
-	opts.Experimental.ReadCompactionRate = math.MaxInt32
-	opts.EnsureDefaults()
-	dbPeb, errPeb := tmdb.NewPebbleDBWithOpts(dbName, dbDirTarget)
+	pebbleOptions.Experimental.ReadCompactionRate = math.MaxInt32
+	pebbleOptions.EnsureDefaults()
+	dbPeb, errPeb := tmdb.NewPebbleDBWithOpts(dbName, dbDirTarget, pebbleOptions)
 
 	if errPeb != nil {
 		panic(errPeb)
@@ -64,7 +64,7 @@ func main() {
 
 	offset := 0
 
-	rawDBPebble := dbPeb.(*tmdb.PebbleDB).DB()
+	rawDBPebble := dbPeb.DB()
 	bat := rawDBPebble.NewBatch()
 
 	for ; itr.Valid(); itr.Next() {
