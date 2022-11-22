@@ -29,6 +29,7 @@ func main() {
 		DisableSeeksCompaction: true,
 		WriteL0PauseTrigger:    math.MaxInt32,
 		WriteL0SlowdownTrigger: math.MaxInt32,
+		OpenFilesCacheCapacity: 100,
 	}
 	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
@@ -42,6 +43,7 @@ func main() {
 		L0StopWritesThreshold:       math.MaxInt32,
 		MaxConcurrentCompactions:    1,
 		DisableAutomaticCompactions: true,
+		MaxOpenFiles:                100,
 	}
 	pebbleOptions.Experimental.ReadCompactionRate = math.MaxInt32
 	pebbleOptions.EnsureDefaults()
@@ -86,11 +88,6 @@ func main() {
 
 			runtime.GC() // Force GC
 		}
-
-		// for testing only
-		//if offset > 15000 {
-		//	break
-		//}
 	}
 
 	// write the last batch
