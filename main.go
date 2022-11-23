@@ -80,7 +80,7 @@ func main() {
 	rawDBPebble := dbPeb.DB()
 	bat := rawDBPebble.NewBatch()
 
-	for ; itr.Valid(); itr.Next() {
+	for itr.First(); itr.Valid(); itr.Next() {
 		offset++
 
 		key := itr.Key()
