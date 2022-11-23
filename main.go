@@ -96,6 +96,7 @@ func main() {
 
 			bat.Commit(pebble.Sync)
 			bat.Reset()
+			rawDBPebble.Flush()
 
 			runtime.GC() // Force GC
 		}
@@ -104,4 +105,5 @@ func main() {
 	// write the last batch
 	bat.Commit(pebble.Sync)
 	bat.Close()
+	rawDBPebble.Flush()
 }
