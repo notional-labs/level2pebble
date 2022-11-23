@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/cockroachdb/pebble"
 	levelopt "github.com/syndtr/goleveldb/leveldb/opt"
+	"github.com/syndtr/goleveldb/leveldb/util"
 	tmdb "github.com/tendermint/tm-db"
 	"math"
 	"os"
@@ -58,11 +59,21 @@ func main() {
 		dbLev.Close()
 	}()
 
-	itr, itrErr := dbLev.Iterator(nil, nil)
+	//itr, itrErr := dbLev.Iterator(nil, nil)
+	//if itrErr != nil {
+	//	panic(itrErr)
+	//}
 
-	if itrErr != nil {
-		panic(itrErr)
+	readOptions := levelopt.ReadOptions{
+		DontFillCache: true,
+		Strict:        levelopt.DefaultStrict,
 	}
+	itr := dbLev.DB().NewIterator(&util.Range{Start: nil, Limit: nil}, &readOptions)
+
+	defer func() {
+		// itr.Close()
+		itr.Release()
+	}()
 
 	offset := 0
 
@@ -93,6 +104,4 @@ func main() {
 	// write the last batch
 	bat.Commit(pebble.Sync)
 	bat.Close()
-
-	itr.Close()
 }
