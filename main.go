@@ -22,7 +22,7 @@ func main() {
 	dbName := filepath.Base(os.Args[1])
 	dbName = dbName[:len(dbName)-len(filepath.Ext(dbName))] // get rid of .db
 	dbDirSource := filepath.Dir(os.Args[1])
-	//dbDirTarget := os.Args[2]
+	dbDirTarget := os.Args[2]
 
 	// options to disable compaction for goleveldb
 	levelOptions := levelopt.Options{
@@ -30,29 +30,29 @@ func main() {
 		DisableSeeksCompaction: true,
 		WriteL0PauseTrigger:    math.MaxInt32,
 		WriteL0SlowdownTrigger: math.MaxInt32,
-		OpenFilesCacheCapacity: 100,
+		OpenFilesCacheCapacity: 10,
 	}
 	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
 		panic(errLev)
 	}
 
-	//// options to disable compaction for pebbledb
-	//pebbleOptions := &pebble.Options{
-	//	L0CompactionFileThreshold:   math.MaxInt32,
-	//	L0CompactionThreshold:       math.MaxInt32,
-	//	L0StopWritesThreshold:       math.MaxInt32,
-	//	MaxConcurrentCompactions:    1,
-	//	DisableAutomaticCompactions: true,
-	//	MaxOpenFiles:                100,
-	//}
-	//pebbleOptions.Experimental.ReadCompactionRate = math.MaxInt32
-	//pebbleOptions.EnsureDefaults()
-	//dbPeb, errPeb := tmdb.NewPebbleDBWithOpts(dbName, dbDirTarget, pebbleOptions)
-	//
-	//if errPeb != nil {
-	//	panic(errPeb)
-	//}
+	// options to disable compaction for pebbledb
+	pebbleOptions := &pebble.Options{
+		L0CompactionFileThreshold:   math.MaxInt32,
+		L0CompactionThreshold:       math.MaxInt32,
+		L0StopWritesThreshold:       math.MaxInt32,
+		MaxConcurrentCompactions:    1,
+		DisableAutomaticCompactions: true,
+		MaxOpenFiles:                10,
+	}
+	pebbleOptions.Experimental.ReadCompactionRate = math.MaxInt32
+	pebbleOptions.EnsureDefaults()
+	dbPeb, errPeb := tmdb.NewPebbleDBWithOpts(dbName, dbDirTarget, pebbleOptions)
+
+	if errPeb != nil {
+		panic(errPeb)
+	}
 
 	defer func() {
 		//dbPeb.Close()
@@ -77,31 +77,31 @@ func main() {
 
 	offset := 0
 
-	//rawDBPebble := dbPeb.DB()
-	//bat := rawDBPebble.NewBatch()
+	rawDBPebble := dbPeb.DB()
+	bat := rawDBPebble.NewBatch()
 
 	for ; itr.Valid(); itr.Next() {
 		offset++
 
-		//key := itr.Key()
-		//value := itr.Value()
+		key := itr.Key()
+		value := itr.Value()
 
-		//errSet := bat.Set(key, value, pebble.Sync)
-		//if errSet != nil {
-		//	panic(errSet)
-		//}
-		//
-		//if bat.Len() >= 1073741824 { // 1 GB
-		//	fmt.Printf("processing %s: %d\n", dbName, offset)
-		//
-		//	bat.Commit(pebble.Sync)
-		//	bat.Reset()
-		//
-		//	runtime.GC() // Force GC
-		//}
+		errSet := bat.Set(key, value, pebble.Sync)
+		if errSet != nil {
+			panic(errSet)
+		}
+
+		if bat.Len() >= 107374182 { // 100 MB
+			fmt.Printf("processing %s: %d\n", dbName, offset)
+
+			bat.Commit(pebble.Sync)
+			bat.Reset()
+
+			runtime.GC() // Force GC
+		}
 	}
 
-	//// write the last batch
-	//bat.Commit(pebble.Sync)
-	//bat.Close()
+	// write the last batch
+	bat.Commit(pebble.Sync)
+	bat.Close()
 }
