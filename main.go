@@ -104,7 +104,7 @@ func main() {
 			itr.Release()
 			itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
 			itr.First()
-			itr.Next()
+			//itr.Next()
 		}
 	}
 
