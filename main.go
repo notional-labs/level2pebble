@@ -55,7 +55,7 @@ func main() {
 	}
 
 	defer func() {
-		//dbPeb.Close()
+		dbPeb.Close()
 		dbLev.Close()
 	}()
 
