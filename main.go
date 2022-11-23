@@ -81,10 +81,10 @@ func main() {
 	bat := rawDBPebble.NewBatch()
 
 	for ; itr.Valid(); itr.Next() {
+		offset++
+
 		key := itr.Key()
 		value := itr.Value()
-
-		offset++
 
 		errSet := bat.Set(key, value, pebble.Sync)
 		if errSet != nil {
