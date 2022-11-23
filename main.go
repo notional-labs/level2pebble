@@ -83,8 +83,8 @@ func main() {
 	for itr.First(); itr.Valid(); itr.Next() {
 		offset++
 
-		key := itr.Key()
-		value := itr.Value()
+		key := cp(itr.Key())
+		value := cp(itr.Value())
 
 		errSet := bat.Set(key, value, pebble.Sync)
 		if errSet != nil {
@@ -99,6 +99,12 @@ func main() {
 			rawDBPebble.Flush()
 
 			runtime.GC() // Force GC
+
+			// release itr and create the new one to see if mem usage will be lower
+			itr.Release()
+			itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
+			itr.First()
+			itr.Next()
 		}
 	}
 
@@ -106,4 +112,10 @@ func main() {
 	bat.Commit(pebble.Sync)
 	bat.Close()
 	rawDBPebble.Flush()
+}
+
+func cp(bz []byte) (ret []byte) {
+	ret = make([]byte, len(bz))
+	copy(ret, bz)
+	return ret
 }
