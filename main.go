@@ -90,7 +90,7 @@ func main() {
 		key := cp(itr.Key())
 		//value := cp(itr.Value())
 
-		if offset%1000000 == 0 {
+		if offset%100000 == 0 {
 			fmt.Printf("reading %s: %d\n", dbName, offset)
 			// release itr and create the new one to see if mem usage will be lower
 			itr.Release()
