@@ -34,6 +34,7 @@ func main() {
 		//BlockCacheCapacity:     -1,
 		BlockCacheEvictRemoved: true,
 		DisableBlockCache:      true,
+		ReadOnly:               true,
 	}
 	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
