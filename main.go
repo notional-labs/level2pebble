@@ -94,10 +94,12 @@ func main() {
 			fmt.Printf("reading %s: %d\n", dbName, offset)
 			// release itr and create the new one to see if mem usage will be lower
 			itr.Release()
+
+			runtime.GC() // Force GC
+
 			itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
 			itr.First()
 
-			runtime.GC() // Force GC
 		}
 
 		//errSet := bat.Set(key, value, pebble.Sync)
@@ -112,10 +114,12 @@ func main() {
 		//	bat.Reset()
 		//	rawDBPebble.Flush()
 		//
-		//	runtime.GC() // Force GC
 		//
 		//	// release itr and create the new one to see if mem usage will be lower
 		//	itr.Release()
+		//
+		//	runtime.GC() // Force GC
+		//
 		//	itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
 		//	itr.First()
 		//	//itr.Next()
