@@ -31,7 +31,8 @@ func main() {
 		WriteL0PauseTrigger:    math.MaxInt32,
 		WriteL0SlowdownTrigger: math.MaxInt32,
 		OpenFilesCacheCapacity: 10,
-		BlockCacheCapacity:     -1,
+		//BlockCacheCapacity:     -1,
+		BlockCacheEvictRemoved: true,
 	}
 	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
