@@ -87,6 +87,7 @@ func main() {
 		//value := cp(itr.Value())
 
 		if offset%1000000 == 0 {
+			fmt.Printf("reading %s: %d\n", dbName, offset)
 			// release itr and create the new one to see if mem usage will be lower
 			itr.Release()
 			itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
