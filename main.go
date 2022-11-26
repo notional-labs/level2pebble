@@ -30,7 +30,7 @@ func main() {
 		DisableSeeksCompaction: true,
 		WriteL0PauseTrigger:    math.MaxInt32,
 		WriteL0SlowdownTrigger: math.MaxInt32,
-		OpenFilesCacheCapacity: 10,
+		OpenFilesCacheCapacity: -1,
 		//BlockCacheCapacity:     -1,
 		BlockCacheEvictRemoved: true,
 		DisableBufferPool:      true,
