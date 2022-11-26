@@ -33,6 +33,7 @@ func main() {
 		OpenFilesCacheCapacity: 10,
 		//BlockCacheCapacity:     -1,
 		BlockCacheEvictRemoved: true,
+		DisableBufferPool:      true,
 		DisableBlockCache:      true,
 		ReadOnly:               true,
 	}
