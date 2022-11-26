@@ -90,10 +90,17 @@ func main() {
 		key := cp(itr.Key())
 		//value := cp(itr.Value())
 
-		if offset%10000 == 0 {
+		if offset%1000000 == 0 {
 			fmt.Printf("reading %s: %d\n", dbName, offset)
 			// release itr and create the new one to see if mem usage will be lower
 			itr.Release()
+
+			// close the db and reopen it
+			dbLev.Close()
+			dbLev, errLev = tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
+			if errLev != nil {
+				panic(errLev)
+			}
 
 			runtime.GC() // Force GC
 
