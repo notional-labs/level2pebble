@@ -149,6 +149,8 @@ func main() {
 	//bat.Commit(pebble.Sync)
 	//bat.Close()
 	//rawDBPebble.Flush()
+
+	fmt.Printf("Done!")
 }
 
 func cp(bz []byte) (ret []byte) {
