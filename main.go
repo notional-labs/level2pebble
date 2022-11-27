@@ -36,6 +36,7 @@ func main() {
 		DisableBufferPool:      true,
 		DisableBlockCache:      true,
 		ReadOnly:               true,
+		OpenFilesCacher:        levelopt.NoCacher,
 	}
 	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
@@ -96,12 +97,12 @@ func main() {
 			// release itr and create the new one to see if mem usage will be lower
 			itr.Release()
 
-			// close the db and reopen it
-			dbLev.Close()
-			dbLev, errLev = tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
-			if errLev != nil {
-				panic(errLev)
-			}
+			//// close the db and reopen it
+			//dbLev.Close()
+			//dbLev, errLev = tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
+			//if errLev != nil {
+			//	panic(errLev)
+			//}
 
 			runtime.GC() // Force GC
 
