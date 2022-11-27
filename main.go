@@ -38,6 +38,7 @@ func main() {
 		DisableBlockCache:      true,
 		ReadOnly:               true,
 		OpenFilesCacher:        levelopt.NoCacher,
+		BlockCacher:            levelopt.NoCacher,
 	}
 	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
