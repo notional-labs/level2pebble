@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	//"github.com/cockroachdb/pebble"
 	levelopt "github.com/syndtr/goleveldb/leveldb/opt"
@@ -93,7 +94,8 @@ func main() {
 		//value := cp(itr.Value())
 
 		if offset%1000000 == 0 {
-			fmt.Printf("reading %s: %d\n", dbName, offset)
+			str_hex_key := hex.EncodeToString(key)
+			fmt.Printf("reading %s: %d, key=%s\n", dbName, offset, str_hex_key)
 			// release itr and create the new one to see if mem usage will be lower
 			itr.Release()
 
