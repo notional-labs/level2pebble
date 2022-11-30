@@ -27,18 +27,19 @@ func main() {
 
 	// options to disable compaction for goleveldb
 	levelOptions := levelopt.Options{
-		CompactionL0Trigger:    math.MaxInt32,
-		DisableSeeksCompaction: true,
-		WriteL0PauseTrigger:    math.MaxInt32,
-		WriteL0SlowdownTrigger: math.MaxInt32,
-		OpenFilesCacheCapacity: -1,
-		BlockCacheCapacity:     -1,
-		BlockCacheEvictRemoved: true,
-		DisableBufferPool:      true,
-		DisableBlockCache:      true,
-		ReadOnly:               true,
-		OpenFilesCacher:        levelopt.NoCacher,
-		BlockCacher:            levelopt.NoCacher,
+		//CompactionL0Trigger:    math.MaxInt32,
+		//DisableSeeksCompaction: true,
+		//WriteL0PauseTrigger:    math.MaxInt32,
+		//WriteL0SlowdownTrigger: math.MaxInt32,
+		//OpenFilesCacheCapacity: -1,
+		//BlockCacheCapacity:     -1,
+		//BlockCacheEvictRemoved: true,
+		//DisableBufferPool:      true,
+		//DisableBlockCache:      true,
+		ReadOnly: true,
+		//OpenFilesCacher:        levelopt.NoCacher,
+		//BlockCacher:            levelopt.NoCacher,
+		CompactionTableSizeMultiplier: 2.0,
 	}
 	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
