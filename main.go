@@ -7,7 +7,7 @@ import (
 	levelopt "github.com/syndtr/goleveldb/leveldb/opt"
 	"github.com/syndtr/goleveldb/leveldb/util"
 	tmdb "github.com/tendermint/tm-db"
-	"math"
+	//"math"
 	"os"
 	"path/filepath"
 	"runtime"
