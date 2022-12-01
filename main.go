@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"github.com/cockroachdb/pebble"
 	"math"
@@ -102,25 +103,29 @@ func main() {
 		key := cp(itr.Key())
 		value := cp(itr.Value())
 
-		//if offset%100000 == 0 {
-		//	str_hex_key := hex.EncodeToString(key)
-		//	fmt.Printf("reading %s: %d, key=%s\n", dbName, offset, str_hex_key)
-		//
-		//	// release itr and create the new one to see if mem usage will be lower
-		//	//itr.Release()
-		//
-		//	//// close the db and reopen it
-		//	//dbLev.Close()
-		//	//dbLev, errLev = tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
-		//	//if errLev != nil {
-		//	//	panic(errLev)
-		//	//}
-		//
-		//	runtime.GC() // Force GC
-		//
-		//	//itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
-		//	//itr.First()
-		//}
+		if offset < 5241643848 {
+			if offset%100000 == 0 {
+				str_hex_key := hex.EncodeToString(key)
+				fmt.Printf("reading %s: %d, key=%s\n", dbName, offset, str_hex_key)
+
+				// release itr and create the new one to see if mem usage will be lower
+				//itr.Release()
+
+				//// close the db and reopen it
+				//dbLev.Close()
+				//dbLev, errLev = tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
+				//if errLev != nil {
+				//	panic(errLev)
+				//}
+				//
+				//runtime.GC() // Force GC
+				//
+				//itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
+				//itr.First()
+			}
+
+			continue
+		}
 
 		errSet := bat.Set(key, value, pebble.Sync)
 		if errSet != nil {
@@ -128,10 +133,19 @@ func main() {
 		}
 
 		if bat.Len() >= 107374182 { // 100 MB
-			fmt.Printf("processing %s: %d\n", dbName, offset)
+			str_hex_key := hex.EncodeToString(key)
+			fmt.Printf("processing %s: %d, key=%s\n", dbName, offset, str_hex_key)
 
-			bat.Commit(pebble.Sync)
-			rawDBPebble.Flush()
+			errComit := bat.Commit(pebble.Sync)
+			if errComit != nil {
+				panic(errComit)
+			}
+
+			errFlush := rawDBPebble.Flush()
+			if errFlush != nil {
+				panic(errFlush)
+			}
+
 			bat.Reset()
 
 			//// release itr and create the new one to see if mem usage will be lower
@@ -146,8 +160,16 @@ func main() {
 	}
 
 	// write the last batch
-	bat.Commit(pebble.Sync)
-	rawDBPebble.Flush()
+	errComit := bat.Commit(pebble.Sync)
+	if errComit != nil {
+		panic(errComit)
+	}
+
+	errFlush := rawDBPebble.Flush()
+	if errFlush != nil {
+		panic(errFlush)
+	}
+
 	bat.Close()
 
 	fmt.Printf("Done!")
