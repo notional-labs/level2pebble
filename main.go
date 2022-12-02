@@ -100,11 +100,9 @@ func main() {
 	for itr.First(); itr.Valid(); itr.Next() {
 		offset++
 
-		key := cp(itr.Key())
-		value := cp(itr.Value())
-
 		if offset < 5241643848 {
 			if offset%100000 == 0 {
+				key := cp(itr.Key())
 				str_hex_key := hex.EncodeToString(key)
 				fmt.Printf("reading %s: %d, key=%s\n", dbName, offset, str_hex_key)
 
@@ -126,6 +124,9 @@ func main() {
 
 			continue
 		}
+
+		key := cp(itr.Key())
+		value := cp(itr.Value())
 
 		errSet := bat.Set(key, value, pebble.Sync)
 		if errSet != nil {
