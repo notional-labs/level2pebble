@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/hex"
 	"fmt"
 	"github.com/cockroachdb/pebble"
@@ -29,19 +28,8 @@ func main() {
 
 	// options to disable compaction for goleveldb
 	levelOptions := levelopt.Options{
-		//CompactionL0Trigger:    math.MaxInt32,
-		//DisableSeeksCompaction: true,
-		//WriteL0PauseTrigger:    math.MaxInt32,
-		//WriteL0SlowdownTrigger: math.MaxInt32,
-		//OpenFilesCacheCapacity: -1,
-		//BlockCacheCapacity:     -1,
-		//BlockCacheEvictRemoved: true,
-		//DisableBufferPool:      true,
-		//DisableBlockCache:      true,
 		ReadOnly: true,
-		//OpenFilesCacher:        levelopt.NoCacher,
-		//BlockCacher:            levelopt.NoCacher,
-		CompactionTableSizeMultiplier: 2.0,
+		//CompactionTableSizeMultiplier: 2.0,
 	}
 	dbLev, errLev := tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
 	if errLev != nil {
@@ -70,21 +58,10 @@ func main() {
 		dbLev.Close()
 	}()
 
-	//itr, itrErr := dbLev.Iterator(nil, nil)
-	//if itrErr != nil {
-	//	panic(itrErr)
-	//}
-
 	readOptions := levelopt.ReadOptions{
 		DontFillCache: true,
 		Strict:        levelopt.DefaultStrict,
 	}
-
-	//// reading tx_index: 5294000000, key=ffd1e16a90b7b05050324904fa3c05c996da4833d3b4d128bfb95d7b658e0584
-	//start_key, errDecode := hex.DecodeString("ffd1e16a90b7b05050324904fa3c05c996da4833d3b4d128bfb95d7b658e0584")
-	//if errDecode != nil {
-	//	panic(errDecode)
-	//}
 
 	itr := dbLev.DB().NewIterator(&util.Range{Start: nil, Limit: nil}, &readOptions)
 
@@ -98,43 +75,11 @@ func main() {
 	rawDBPebble := dbPeb.DB()
 	bat := rawDBPebble.NewBatch()
 
-	// used to filter keys `update_client.header/...`
-	key_update_client_header_prefix, _ := hex.DecodeString("7570646174655f636c69656e742e6865616465722f")
-
 	for itr.First(); itr.Valid(); itr.Next() {
 		offset++
 
-		////if offset < 5241643848 {
-		//	if offset%100000 == 0 {
-		//		key := cp(itr.Key())
-		//		str_hex_key := hex.EncodeToString(key)
-		//		fmt.Printf("reading %s: %d, key=%s\n", dbName, offset, str_hex_key)
-		//
-		//		// release itr and create the new one to see if mem usage will be lower
-		//		//itr.Release()
-		//
-		//		//// close the db and reopen it
-		//		//dbLev.Close()
-		//		//dbLev, errLev = tmdb.NewGoLevelDBWithOpts(dbName, dbDirSource, &levelOptions)
-		//		//if errLev != nil {
-		//		//	panic(errLev)
-		//		//}
-		//		//
-		//		//runtime.GC() // Force GC
-		//		//
-		//		//itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
-		//		//itr.First()
-		//	}
-		//
-		////	continue
-		////}
-
 		key := cp(itr.Key())
 		value := cp(itr.Value())
-
-		if bytes.HasPrefix(key, key_update_client_header_prefix) {
-			continue
-		}
 
 		errSet := bat.Set(key, value, pebble.Sync)
 		if errSet != nil {
@@ -157,14 +102,7 @@ func main() {
 
 			bat.Reset()
 
-			//// release itr and create the new one to see if mem usage will be lower
-			//itr.Release()
-
 			runtime.GC() // Force GC
-
-			//itr = dbLev.DB().NewIterator(&util.Range{Start: key, Limit: nil}, &readOptions)
-			//itr.First()
-			////itr.Next()
 		}
 	}
 
