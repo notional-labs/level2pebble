@@ -8,7 +8,7 @@ import (
 
 	levelopt "github.com/syndtr/goleveldb/leveldb/opt"
 	"github.com/syndtr/goleveldb/leveldb/util"
-	tmdb "github.com/tendermint/tm-db"
+	tmdb "github.com/cometbft/cometbft-db"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -41,9 +41,9 @@ func main() {
 		L0CompactionFileThreshold:   math.MaxInt32,
 		L0CompactionThreshold:       math.MaxInt32,
 		L0StopWritesThreshold:       math.MaxInt32,
-		MaxConcurrentCompactions:    1,
+		MaxConcurrentCompactions:    func() int { return 1 },
 		DisableAutomaticCompactions: true,
-		MaxOpenFiles:                100,
+		MaxOpenFiles:                500,
 	}
 	pebbleOptions.Experimental.ReadCompactionRate = math.MaxInt32
 	pebbleOptions.EnsureDefaults()
@@ -86,7 +86,7 @@ func main() {
 			panic(errSet)
 		}
 
-		if bat.Len() >= 107374182 { // 100 MB
+		if bat.Len() >= 1073741820 { // 1000 MB
 			str_hex_key := hex.EncodeToString(key)
 			fmt.Printf("processing %s: %d, key=%s\n", dbName, offset, str_hex_key)
 
